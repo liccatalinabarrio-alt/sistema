@@ -170,7 +170,13 @@ body{font-family:'Inter',sans-serif;background:var(--navy3);color:var(--white);m
 .sidebar-search input{width:100%;padding:.5rem .75rem;background:var(--input-bg);border:1px solid var(--border);border-radius:6px;color:var(--white);font-size:.83rem;font-family:'Inter',sans-serif}
 .sidebar-search input::placeholder{color:var(--gray)}
 .sidebar-search input:focus{outline:none;border-color:var(--gold)}
-.sidebar-label{padding:.65rem 1rem .35rem;font-size:.68rem;font-weight:700;letter-spacing:.15em;color:var(--gray);text-transform:uppercase;display:flex;align-items:center;gap:.4rem}
+.sidebar-label{padding:.65rem 1rem .35rem;font-size:.68rem;font-weight:700;letter-spacing:.15em;color:var(--gray);text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;gap:.4rem}
+.sidebar-label-count{font-size:.65rem;font-weight:700;padding:.1rem .38rem;border-radius:8px;background:var(--tag-bg);color:var(--gray)}
+.sidebar-sublabel{padding:.28rem 1rem .28rem 1.5rem;font-size:.7rem;font-weight:600;color:var(--gray);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:.4rem;transition:color .12s}
+.sidebar-sublabel:hover{color:var(--gold)}
+.sidebar-sublabel .sub-right{display:flex;align-items:center;gap:.35rem}
+.sidebar-sublabel .sub-count{font-size:.63rem;font-weight:700;padding:.1rem .35rem;border-radius:8px;background:var(--tag-bg);color:var(--gray)}
+.sidebar-sublabel .lock-icon{font-size:.72rem;opacity:.7}
 .pending-badge-dot{display:none;width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .players-list{overflow-y:auto;flex:1;padding:0 .45rem .5rem;min-height:0}
@@ -416,14 +422,26 @@ body{font-family:'Inter',sans-serif;background:var(--navy3);color:var(--white);m
     <div class="sidebar-label">Pendientes <span class="pending-badge-dot" id="pendingDot"></span></div>
     <div style="padding:0 .45rem .2rem" id="pendingList"></div>
 
-    <div class="sidebar-label">Punto de Quiebre</div>
-    <div style="padding:0 .45rem .2rem" id="listPDQ"></div>
+    <div class="sidebar-label"><span>Punto de Quiebre</span><span class="sidebar-label-count" id="cntPDQ">0</span></div>
+    <div class="sidebar-sublabel" id="sublabelPDQ_cata" onclick="unlockCata('PDQ_cata')"><span>▸ Cata</span><span class="sub-right"><span class="sub-count" id="cntPDQ_cata">0</span><span class="lock-icon">🔒</span></span></div>
+    <div style="padding:0 .45rem .2rem;display:none" id="listPDQ_cata"></div>
+    <div class="sidebar-sublabel" id="sublabelPDQ_psico"><span>▸ Nueva Psico</span><span class="sub-right"><span class="sub-count" id="cntPDQ_psico">0</span></span></div>
+    <div style="padding:0 .45rem .2rem" id="listPDQ_psico"></div>
 
-    <div class="sidebar-label">Sin Vuelta Atrás</div>
-    <div style="padding:0 .45rem .2rem" id="listSVA"></div>
+    <div class="sidebar-label"><span>Sin Vuelta Atrás</span><span class="sidebar-label-count" id="cntSVA">0</span></div>
+    <div class="sidebar-sublabel" id="sublabelSVA_cata" onclick="unlockCata('SVA_cata')"><span>▸ Cata</span><span class="sub-right"><span class="sub-count" id="cntSVA_cata">0</span><span class="lock-icon">🔒</span></span></div>
+    <div style="padding:0 .45rem .2rem;display:none" id="listSVA_cata"></div>
+    <div class="sidebar-sublabel" id="sublabelSVA_psico"><span>▸ Nueva Psico</span><span class="sub-right"><span class="sub-count" id="cntSVA_psico">0</span></span></div>
+    <div style="padding:0 .45rem .2rem" id="listSVA_psico"></div>
 
-    <div class="sidebar-label">Sesiones particulares</div>
-    <div style="padding:0 .45rem .2rem" id="listPART"></div>
+    <div class="sidebar-label"><span>Sesiones particulares Cata</span><span class="sub-right"><span class="sidebar-label-count" id="cntPART">0</span><span style="cursor:pointer;font-size:.8rem" onclick="unlockCata('PART')">🔒</span></span></div>
+    <div style="padding:0 .45rem .2rem;display:none" id="listPART"></div>
+
+    <div class="sidebar-label"><span>Mente Fría</span><span class="sidebar-label-count" id="cntMF">0</span></div>
+    <div class="sidebar-sublabel" id="sublabelMF_cata" onclick="unlockCata('MF_cata')"><span>▸ Cata</span><span class="sub-right"><span class="sub-count" id="cntMF_cata">0</span><span class="lock-icon">🔒</span></span></div>
+    <div style="padding:0 .45rem .2rem;display:none" id="listMF_cata"></div>
+    <div class="sidebar-sublabel" id="sublabelMF_psico"><span>▸ Nueva Psico</span><span class="sub-right"><span class="sub-count" id="cntMF_psico">0</span></span></div>
+    <div style="padding:0 .45rem .2rem" id="listMF_psico"></div>
 
     <div class="sidebar-label" id="labelSinPrograma" style="display:none">Sin programa</div>
     <div style="padding:0 .45rem .45rem" id="listSIN"></div>
@@ -464,7 +482,10 @@ body{font-family:'Inter',sans-serif;background:var(--navy3);color:var(--white);m
           <div class="form-field"><label>Ciudad <span class="req">*</span></label><input type="text" name="ciudad" required placeholder="Ej: Buenos Aires"></div>
         </div>
         <div class="field-row">
+          <div class="form-field"><label>Fecha de cumpleaños <span class="req">*</span></label><input type="date" name="fecha_cumple" required></div>
           <div class="form-field"><label>Instagram <span class="req">*</span></label><input type="text" name="instagram" required placeholder="@tunombre"></div>
+        </div>
+        <div class="field-row">
           <div class="form-field"><label>Tu foto <span class="req">*</span></label>
             <input type="file" name="foto_file" id="fotoInput" accept="image/*" required onchange="previewFoto(event)" style="border:1.5px solid #D4C4A8;border-radius:8px;padding:.5rem .85rem;width:100%;font-family:'Inter',sans-serif;font-size:.85rem;color:var(--navy);background:#FAFAF8">
             <div id="fotoPreview" style="display:none;margin-top:.5rem">
@@ -510,6 +531,7 @@ body{font-family:'Inter',sans-serif;background:var(--navy3);color:var(--white);m
           </div>
         </div>
         <div class="form-field"><label>Si hay lesión, contame brevemente</label><textarea name="detalle_lesion" placeholder="Opcional"></textarea></div>
+        <div class="form-field"><label>Historial de lesiones <span class="req">*</span></label><div class="hint">¿Tuviste lesiones importantes en el pasado? ¿Cuáles, cuándo, cómo fue la recuperación?</div><textarea name="historial_lesiones" required placeholder="Ej: Rotura de LCA en 2022, tardé 8 meses en volver. Antes tuve un esguince en el tobillo..."></textarea></div>
       </div>
 
       <div class="form-sec">
@@ -663,7 +685,22 @@ body{font-family:'Inter',sans-serif;background:var(--navy3);color:var(--white);m
     <div class="modal-row">
       <div class="modal-field"><label>Puesto</label><input type="text" id="pPuesto"></div>
       <div class="modal-field"><label>Programa</label>
-        <select id="pPrograma"><option value="">Sin asignar</option><option>Punto de Quiebre</option><option>Sin Vuelta Atrás</option><option>Sesiones particulares</option></select>
+        <select id="pPrograma">
+          <option value="">Sin asignar</option>
+          <optgroup label="Punto de Quiebre">
+            <option>Punto de Quiebre - Cata</option>
+            <option>Punto de Quiebre - Nueva Psico</option>
+          </optgroup>
+          <optgroup label="Sin Vuelta Atrás">
+            <option>Sin Vuelta Atrás - Cata</option>
+            <option>Sin Vuelta Atrás - Nueva Psico</option>
+          </optgroup>
+          <option>Sesiones particulares Cata</option>
+          <optgroup label="Mente Fría">
+            <option>Mente Fría - Cata</option>
+            <option>Mente Fría - Nueva Psico</option>
+          </optgroup>
+        </select>
       </div>
     </div>
     <div class="modal-row">
@@ -813,6 +850,26 @@ function playerItemHTML(p){
   </div>`;
 }
 
+// Estado de carpetas Cata desbloqueadas en esta sesión
+if(!window.cataUnlocked) window.cataUnlocked = {};
+
+function unlockCata(key){
+  if(window.cataUnlocked[key]){
+    // Ya desbloqueada: toggle visibilidad
+    const list = document.getElementById('list'+key);
+    if(list) list.style.display = list.style.display==='none' ? '' : 'none';
+    return;
+  }
+  const codigo = prompt('Esta carpeta es privada.\nIngresá el código para acceder:');
+  if(codigo === null) return;
+  if(codigo === '2709'){
+    window.cataUnlocked[key] = true;
+    renderSidebar(document.getElementById('searchInput').value);
+  } else {
+    alert('Código incorrecto.');
+  }
+}
+
 function renderSidebar(filter=''){
   const dot=document.getElementById('pendingDot');
   document.getElementById('mySessionsCount').textContent=(S.mySessions||[]).length;
@@ -829,20 +886,63 @@ function renderSidebar(filter=''){
       <div class="s-info"><div class="s-name">${p.nombre||'Nueva jugadora'}</div><div class="s-meta" style="color:var(--green)">Pendiente</div></div>
     </div>`).join('') || '<div style="padding:.3rem .5rem .5rem;font-size:.75rem;color:var(--gray)">—</div>';
 
-  // Agrupar por programa
-  const grupos = {
-    'Punto de Quiebre': filtered.filter(p=>p.programa==='Punto de Quiebre'),
-    'Sin Vuelta Atrás': filtered.filter(p=>p.programa==='Sin Vuelta Atrás'),
-    'Sesiones particulares': filtered.filter(p=>p.programa==='Sesiones particulares'),
-    'sin': filtered.filter(p=>!p.programa||p.programa===''),
+  // Agrupar por programa y propietaria
+  const grp = {
+    PDQ_cata:   filtered.filter(p=>p.programa==='Punto de Quiebre - Cata'),
+    PDQ_psico:  filtered.filter(p=>p.programa==='Punto de Quiebre - Nueva Psico'),
+    SVA_cata:   filtered.filter(p=>p.programa==='Sin Vuelta Atrás - Cata'),
+    SVA_psico:  filtered.filter(p=>p.programa==='Sin Vuelta Atrás - Nueva Psico'),
+    PART:       filtered.filter(p=>p.programa==='Sesiones particulares Cata'||p.programa==='Sesiones particulares'),
+    MF_cata:    filtered.filter(p=>p.programa==='Mente Fría - Cata'),
+    MF_psico:   filtered.filter(p=>p.programa==='Mente Fría - Nueva Psico'),
+    sin:        filtered.filter(p=>!p.programa||p.programa===''),
   };
 
   const empty = '<div style="padding:.3rem .5rem .5rem;font-size:.75rem;color:var(--gray)">—</div>';
-  document.getElementById('listPDQ').innerHTML = grupos['Punto de Quiebre'].map(playerItemHTML).join('') || empty;
-  document.getElementById('listSVA').innerHTML = grupos['Sin Vuelta Atrás'].map(playerItemHTML).join('') || empty;
-  document.getElementById('listPART').innerHTML = grupos['Sesiones particulares'].map(playerItemHTML).join('') || empty;
 
-  const sinProg = grupos['sin'];
+  // Contadores de programa
+  document.getElementById('cntPDQ').textContent = grp.PDQ_cata.length + grp.PDQ_psico.length;
+  document.getElementById('cntSVA').textContent = grp.SVA_cata.length + grp.SVA_psico.length;
+  document.getElementById('cntPART').textContent = grp.PART.length;
+  document.getElementById('cntMF').textContent = grp.MF_cata.length + grp.MF_psico.length;
+
+  // Contadores de subcarpetas
+  document.getElementById('cntPDQ_cata').textContent = grp.PDQ_cata.length;
+  document.getElementById('cntPDQ_psico').textContent = grp.PDQ_psico.length;
+  document.getElementById('cntSVA_cata').textContent = grp.SVA_cata.length;
+  document.getElementById('cntSVA_psico').textContent = grp.SVA_psico.length;
+  document.getElementById('cntMF_cata').textContent = grp.MF_cata.length;
+  document.getElementById('cntMF_psico').textContent = grp.MF_psico.length;
+
+  // Helper para renderizar lista con candado
+  function renderList(key, players){
+    const el = document.getElementById('list'+key);
+    if(!el) return;
+    if(window.cataUnlocked[key]){
+      el.style.display = '';
+      el.innerHTML = players.map(playerItemHTML).join('') || empty;
+      // Actualizar ícono de candado a desbloqueado
+      const sub = document.getElementById('sublabel'+key);
+      if(sub){ const lk=sub.querySelector('.lock-icon'); if(lk) lk.textContent='🔓'; }
+      const partLk = el.previousElementSibling?.querySelector('[onclick*="unlockCata"]');
+      if(partLk) partLk.textContent='🔓';
+    } else {
+      el.style.display = 'none';
+      el.innerHTML = '';
+    }
+  }
+
+  renderList('PDQ_cata', grp.PDQ_cata);
+  renderList('SVA_cata', grp.SVA_cata);
+  renderList('PART', grp.PART);
+  renderList('MF_cata', grp.MF_cata);
+
+  // Subcarpetas Nueva Psico (siempre visibles)
+  document.getElementById('listPDQ_psico').innerHTML = grp.PDQ_psico.map(playerItemHTML).join('') || empty;
+  document.getElementById('listSVA_psico').innerHTML = grp.SVA_psico.map(playerItemHTML).join('') || empty;
+  document.getElementById('listMF_psico').innerHTML = grp.MF_psico.map(playerItemHTML).join('') || empty;
+
+  const sinProg = grp.sin;
   document.getElementById('labelSinPrograma').style.display = sinProg.length ? 'flex' : 'none';
   document.getElementById('listSIN').innerHTML = sinProg.map(playerItemHTML).join('');
 }
@@ -858,8 +958,8 @@ function renderPendingDetail(id){
   const panel=document.getElementById('mainPanel');
   const p=(S.pending||[]).find(x=>x.id===id);
   if(!p){renderMain();return}
-  const basics=[['Club',p.club],['País del club',p.pais_club],['Puesto',p.puesto],['Situación',p.situacion],['Edad',p.edad],['Email',p.email],['WhatsApp',p.wa],['Lesión',p.lesion]].filter(([,v])=>v);
-  const longs=[['Trayectoria',p.trayectoria],['Cómo llegó al club',p.como_llego_club],['Apoyo familiar',p.apoyo_familia],['Vínculo familiar',p.vinculo_familia],['Lo que más le pesa',p.lo_que_pesa],['Factores que influyen',Array.isArray(p.factores)?p.factores.join(', ')+(p.factores_otro?' (Otro: '+p.factores_otro+')':''):p.factores],['Respuesta bajo presión',p.respuesta_presion],['Gestión de errores',p.gestion_errores],['Confianza (1-10)',p.confianza_hoy],['Gestión de emociones (1-10)',p.gestion_emociones],['Motivación (1-10)',p.motivacion_hoy],['Presión (1-10)',p.presion_hoy],['Qué quiere trabajar',p.que_quiere_trabajar],['Por qué ahora',p.por_que_ahora],['Señal de éxito',p.senial_exito],['Comentario libre',p.comentario_libre]].filter(([,v])=>v);
+  const basics=[['Club',p.club],['País del club',p.pais_club],['Puesto',p.puesto],['Situación',p.situacion],['Edad',p.edad],['Cumpleaños',p.fecha_cumple],['Email',p.email],['WhatsApp',p.wa],['Lesión',p.lesion]].filter(([,v])=>v);
+  const longs=[['Trayectoria',p.trayectoria],['Cómo llegó al club',p.como_llego_club],['Apoyo familiar',p.apoyo_familia],['Vínculo familiar',p.vinculo_familia],['Lo que más le pesa',p.lo_que_pesa],['Factores que influyen',Array.isArray(p.factores)?p.factores.join(', ')+(p.factores_otro?' (Otro: '+p.factores_otro+')':''):p.factores],['Respuesta bajo presión',p.respuesta_presion],['Gestión de errores',p.gestion_errores],['Confianza (1-10)',p.confianza_hoy],['Gestión de emociones (1-10)',p.gestion_emociones],['Motivación (1-10)',p.motivacion_hoy],['Presión (1-10)',p.presion_hoy],['Qué quiere trabajar',p.que_quiere_trabajar],['Por qué ahora',p.por_que_ahora],['Señal de éxito',p.senial_exito],['Historial de lesiones',p.historial_lesiones],['Comentario libre',p.comentario_libre]].filter(([,v])=>v);
   panel.innerHTML=`
     <div class="pl-header">
       <div class="pl-header-info">
@@ -942,6 +1042,8 @@ function renderMain(){
     ['Cómo llegó al club', player.como_llego_club],
     ['Lesión', player.lesion],
     ['Detalle lesión', player.detalle_lesion],
+    ['Historial de lesiones', player.historial_lesiones],
+    ['Fecha de cumpleaños', player.fecha_cumple],
     ['Ciudad', player.ciudad],
     ['Comentario libre', player.comentario_libre],
     ['Notas', player.notas],
@@ -1211,8 +1313,9 @@ function deleteMySession(id){
 function closeModal(id){document.getElementById(id).classList.remove('open')}
 document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')}));
 
-// ── CONTRASEÑA (cambiala acá si querés) ──────────────────
-const PASS='cata2025';
+// ── CONTRASEÑA ───────────────────────────────────────────
+const PASS='cata2025';  // Una sola contraseña para entrar
+// Las carpetas de Cata piden 27/09 internamente (ver unlockCata)
 
 function checkAuth(){
   const ok=sessionStorage.getItem('cata_auth');
