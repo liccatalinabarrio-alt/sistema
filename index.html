@@ -1215,14 +1215,16 @@ function renderSidebar(filter=''){
   // Agrupar por programa y propietaria
   const grp = {
     PDQ_cata:   filtered.filter(p=>p.programa==='Punto de Quiebre - Cata'),
-    PDQ_psico:  filtered.filter(p=>p.programa==='Punto de Quiebre - Azu'),
+    PDQ_psico:  filtered.filter(p=>p.programa==='Punto de Quiebre - Azu'||p.programa==='Punto de Quiebre - Nueva Psico'),
     SVA_cata:   filtered.filter(p=>p.programa==='Sin Vuelta Atrás - Cata'),
-    SVA_psico:  filtered.filter(p=>p.programa==='Sin Vuelta Atrás - Azu'),
+    SVA_psico:  filtered.filter(p=>p.programa==='Sin Vuelta Atrás - Azu'||p.programa==='Sin Vuelta Atrás - Nueva Psico'),
     PART:       filtered.filter(p=>p.programa==='Sesiones particulares Cata'||p.programa==='Sesiones particulares'),
     MF_cata:    filtered.filter(p=>p.programa==='Mente Fría - Cata'),
-    MF_psico:   filtered.filter(p=>p.programa==='Mente Fría - Azu'),
-    sin:        filtered.filter(p=>!p.programa||p.programa===''),
+    MF_psico:   filtered.filter(p=>p.programa==='Mente Fría - Azu'||p.programa==='Mente Fría - Nueva Psico'),
+    sin:        [],
   };
+  const KNOWN_PROGRAMAS=['Punto de Quiebre - Cata','Punto de Quiebre - Azu','Punto de Quiebre - Nueva Psico','Sin Vuelta Atrás - Cata','Sin Vuelta Atrás - Azu','Sin Vuelta Atrás - Nueva Psico','Sesiones particulares Cata','Sesiones particulares','Mente Fría - Cata','Mente Fría - Azu','Mente Fría - Nueva Psico'];
+  grp.sin = filtered.filter(p=>!p.programa||p.programa===''||!KNOWN_PROGRAMAS.includes(p.programa));
 
   const empty = '<div style="padding:.3rem .5rem .5rem;font-size:.75rem;color:var(--gray)">—</div>';
 
